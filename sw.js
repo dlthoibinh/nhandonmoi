@@ -1,6 +1,6 @@
 const BASE = new URL('./', self.location).pathname;
 const CACHE_PREFIX = 'nhan-don-moi-evn-spc-pwa-';
-const CACHE = CACHE_PREFIX + 'v2-no-splash';
+const CACHE = CACHE_PREFIX + 'v3-no-splash';
 
 const STATIC_ASSETS = [
   BASE,
