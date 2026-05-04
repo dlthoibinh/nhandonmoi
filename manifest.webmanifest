@@ -1,9 +1,9 @@
 {
-  "id": "./?app=nhan-don-moi-evn-spc",
-  "name": "NHẬN ĐƠN MỚI ĐIỆN LỰC THỚI BÌNH",
+  "id": "./?app=nhan-don-moi-evn-spc-fast",
+  "name": "Nhận đơn mới EVN SPC",
   "short_name": "Nhận đơn",
   "description": "Ứng dụng nhận đơn mới khách hàng EVN SPC.",
-  "start_url": "./index.html?source=pwa&app=nhan-don-moi",
+  "start_url": "./index.html?source=pwa",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
@@ -11,12 +11,12 @@
   "theme_color": "#0ea5e9",
   "categories": ["business", "productivity", "utilities"],
   "icons": [
-    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-    {"src": "icon-192-any.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
-    {"src": "icon-512-any.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
-    {"src": "icon-192-maskable.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable"},
-    {"src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+    {"src":"icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"icon-192-any.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"icon-512-any.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"icon-192-maskable.png","sizes":"192x192","type":"image/png","purpose":"maskable"},
+    {"src":"icon-512-maskable.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
   ],
   "prefer_related_applications": false
 }
