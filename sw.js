@@ -1,14 +1,18 @@
 const BASE = new URL('./', self.location).pathname;
-const CACHE = 'DONMOIV1';
+const CACHE_PREFIX = 'nhan-don-moi-evn-spc-pwa-';
+const CACHE = CACHE_PREFIX + 'crm-style-pro-v1';
 
 const STATIC_ASSETS = [
   BASE,
   BASE + 'index.html',
   BASE + 'manifest.webmanifest',
+  BASE + 'evn_logo.png',
   BASE + 'icon-192-any.png',
   BASE + 'icon-512-any.png',
   BASE + 'icon-192-maskable.png',
-  BASE + 'icon-512-maskable.png'
+  BASE + 'icon-512-maskable.png',
+  BASE + 'icon-192.png',
+  BASE + 'icon-512.png'
 ];
 
 self.addEventListener('install', (e) => {
@@ -18,7 +22,7 @@ self.addEventListener('install', (e) => {
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.map(k => k !== CACHE ? caches.delete(k) : 0)))
+    caches.keys().then(keys => Promise.all(keys.map(k => k.startsWith(CACHE_PREFIX) && k !== CACHE ? caches.delete(k) : 0)))
   );
   self.clients.claim();
 });
