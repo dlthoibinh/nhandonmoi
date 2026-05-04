@@ -1,11 +1,12 @@
 {
-  "id": "/nhandonmoi/?app=crm-ticket-manager",
-  "name": "NHẬN ĐƠN MỚI ĐL THỚI BÌNH",
-  "short_name": "NHẬN ĐƠN MỚI",
-  "description": "NHẬN ĐƠN MỚI ĐL THỚI BÌNH",
-  "start_url": "/nhandonmoi/index.html?source=pwa&app=crm-ticket-manager",
-  "scope": "/nhandonmoi/",
+  "id": "./?app=nhan-don-moi-evn-spc",
+  "name": "Nhận đơn mới khách hàng EVN SPC",
+  "short_name": "Nhận đơn",
+  "description": "Ứng dụng nhận đơn mới khách hàng EVN SPC.",
+  "start_url": "./index.html?source=pwa&app=nhan-don-moi",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait-primary",
   "background_color": "#ffffff",
   "theme_color": "#0ea5e9",
   "icons": [
@@ -34,5 +35,10 @@
       "purpose": "maskable"
     }
   ],
-  "prefer_related_applications": false
+  "prefer_related_applications": false,
+  "categories": [
+    "business",
+    "productivity",
+    "utilities"
+  ]
 }
