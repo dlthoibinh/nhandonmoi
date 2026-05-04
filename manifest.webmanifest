@@ -1,6 +1,6 @@
 {
   "id": "./?app=nhan-don-moi-evn-spc",
-  "name": "Nhận đơn mới EVN SPC",
+  "name": "NHẬN ĐƠN MỚI ĐIỆN LỰC THỚI BÌNH",
   "short_name": "Nhận đơn",
   "description": "Ứng dụng nhận đơn mới khách hàng EVN SPC.",
   "start_url": "./index.html?source=pwa&app=nhan-don-moi",
