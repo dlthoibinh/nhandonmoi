@@ -2,106 +2,76 @@
 <html lang="vi">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
-  <title>NHẬN ĐƠN MỚI EVN SPC</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <title>NHẬN ĐƠN MỚI ĐL THỚI BÌNH</title>
 
+  <!-- Manifest & PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#0ea5e9">
-  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="icon-192-any.png">
+  <link rel="canonical" href="https://dlthoibinh.github.io/nhandonmoi/">
+
+  <!-- iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Nhận đơn">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <link rel="apple-touch-icon" href="icon-192-any.png">
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
-
-  <link rel="dns-prefetch" href="//script.google.com">
-  <link rel="dns-prefetch" href="//script.googleusercontent.com">
-  <link rel="preconnect" href="https://script.google.com" crossorigin>
-  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
-
-  <meta http-equiv="refresh" content="0; url=https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec">
+  <!-- CSP: cấm mixed-content, chỉ cho phép những domain cần -->
+  <meta http-equiv="Content-Security-Policy"
+        content="
+          default-src 'self';
+          frame-src https://script.google.com https://*.googleusercontent.com;
+          connect-src 'self' https://script.google.com https://*.googleusercontent.com;
+          img-src 'self' data: https:;
+          style-src 'self' 'unsafe-inline';
+          script-src 'self';
+          base-uri 'self';
+          form-action 'none';
+          block-all-mixed-content;
+        ">
 
   <style>
-    :root{
-      --blue:#0ea5e9;
-      --blue2:#0369a1;
-      --text:#0f172a;
-      --muted:#64748b;
-      --line:#e2e8f0;
-    }
-    *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-    html,body{
-      width:100%;height:100%;margin:0;padding:0;background:#fff;color:var(--text);
-      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      overflow:hidden;
-    }
-    .fallback{
-      position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:20px;
-      background:linear-gradient(160deg,#f8fbff,#e0f2fe);
-    }
-    .card{
-      width:min(390px,92vw);padding:22px;border-radius:26px;background:rgba(255,255,255,.95);
-      border:1px solid rgba(14,165,233,.22);box-shadow:0 18px 52px rgba(2,132,199,.16);text-align:center;
-    }
-    .logo{width:78px;height:78px;border-radius:22px;margin-bottom:10px;box-shadow:0 12px 26px rgba(2,132,199,.16)}
-    h1{margin:0 0 8px;font-size:20px;line-height:1.2;font-weight:900;letter-spacing:.1px}
-    p{margin:0 0 16px;color:var(--muted);font-size:14px;line-height:1.45}
-    .btn{
-      appearance:none;border:0;border-radius:999px;padding:12px 18px;font-weight:850;font-size:15px;
-      color:#fff;background:linear-gradient(135deg,var(--blue),var(--blue2));text-decoration:none;
-      display:inline-flex;align-items:center;justify-content:center;min-width:150px;
-      box-shadow:0 10px 22px rgba(3,105,161,.22);
-    }
-    .small{margin-top:12px;font-size:12px;color:#94a3b8}
+    html,body{height:100%;margin:0;background:#f6f7fb;font-family:system-ui,Roboto,Arial}
+    .app{position:fixed;inset:0;display:flex;flex-direction:column}
+    #wrap{flex:1;position:relative}
+    iframe{position:absolute;inset:0;border:0;width:100%;height:100%}
+    .offline{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#fff}
+    .offline.show{display:flex}
+    .offline button{padding:10px 14px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-weight:800;cursor:pointer}
   </style>
 </head>
 <body>
-  <div id="fallback" class="fallback" aria-live="polite">
-    <div class="card">
-      <img class="logo" src="evn_logo.png" alt="Nhận đơn mới">
-      <h1>NHẬN ĐƠN MỚI EVN SPC</h1>
-      <p>Đường truyền đang chậm. Bấm nút bên dưới để mở lại ứng dụng.</p>
-      <a id="openBtn" class="btn" href="https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec" rel="noopener">Vào ứng dụng</a>
-      <div class="small">Bản GitHub tối ưu tốc độ, không dùng iframe.</div>
+  <div class="app">
+    <div id="wrap">
+      <iframe id="app"
+        src="https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec"
+        allow="geolocation *; fullscreen *; camera *; microphone *; clipboard-read; clipboard-write; accelerometer; gyroscope; magnetometer"
+        referrerpolicy="no-referrer"></iframe>
+
+      <div id="offline" class="offline">
+        <div style="text-align:center">
+          <h2>Không có mạng</h2>
+          <p>Ứng dụng cần kết nối Internet để chạy.</p>
+          <button onclick="location.reload()">Thử lại</button>
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
-    (function(){
-      'use strict';
+    const BASE = (location.pathname.endsWith('/')
+      ? location.pathname
+      : location.pathname.replace(/\/[^/]*$/, '/'));
 
-      var APP_URL = 'https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec';
-      var fallback = document.getElementById('fallback');
-      var openBtn = document.getElementById('openBtn');
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register(BASE + 'sw.js', { scope: BASE })
+        .then(r => console.log('SW registered:', r.scope))
+        .catch(e => console.warn('SW register failed:', e));
+    }
 
-      function buildTarget(){
-        var target = new URL(APP_URL);
-        var current = new URL(window.location.href);
-        current.searchParams.forEach(function(value, key){
-          if (!/^(source|app|utm_|v|cache)$/i.test(key)) target.searchParams.set(key, value);
-        });
-        target.searchParams.set('src', 'github');
-        if (current.hash) target.hash = current.hash;
-        return target.toString();
-      }
-
-      var targetUrl = buildTarget();
-      openBtn.href = targetUrl;
-
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('./sw.js', { scope: './' }).catch(function(){});
-      }
-
-      // Mở thẳng Apps Script, không bọc iframe nên nhanh hơn và không mất menu dưới.
-      window.location.replace(targetUrl);
-
-      // Chỉ hiện khi trình duyệt/đường truyền không chuyển trang được.
-      window.setTimeout(function(){
-        fallback.style.display = 'flex';
-      }, 1800);
-    })();
+    const setOfflineUI = on => document.getElementById('offline').classList.toggle('show', !!on);
+    addEventListener('online',  ()=>setOfflineUI(false));
+    addEventListener('offline', ()=>setOfflineUI(true));
+    setOfflineUI(!navigator.onLine);
   </script>
 </body>
 </html>
