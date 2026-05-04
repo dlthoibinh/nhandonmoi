@@ -1,10 +1,7 @@
+const CACHE_PREFIX = 'nhan-don-moi-evn-spc-';
+const CACHE = CACHE_PREFIX + 'fast-pro-v5';
 const BASE = new URL('./', self.location).pathname;
-const CACHE_PREFIX = 'nhan-don-moi-evn-spc-pwa-';
-const CACHE = CACHE_PREFIX + 'v3-no-splash';
-
-const STATIC_ASSETS = [
-  BASE,
-  BASE + 'index.html',
+const ASSETS = [
   BASE + 'manifest.webmanifest',
   BASE + 'evn_logo.png',
   BASE + 'icon-192.png',
@@ -18,7 +15,8 @@ const STATIC_ASSETS = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE)
-      .then(cache => cache.addAll(STATIC_ASSETS))
+      .then(cache => cache.addAll(ASSETS))
+      .catch(() => null)
       .then(() => self.skipWaiting())
   );
 });
@@ -26,43 +24,9 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(
-        keys
-          .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE)
-          .map(key => caches.delete(key))
-      ))
+      .then(keys => Promise.all(keys.map(key => key.startsWith(CACHE_PREFIX) && key !== CACHE ? caches.delete(key) : null)))
       .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener('fetch', event => {
-  const req = event.request;
-  const url = new URL(req.url);
-
-  if (url.origin !== self.location.origin || !url.pathname.startsWith(BASE)) return;
-
-  if (req.mode === 'navigate') {
-    event.respondWith((async () => {
-      try {
-        const fresh = await fetch(req, { cache: 'no-store' });
-        const cache = await caches.open(CACHE);
-        cache.put(BASE + 'index.html', fresh.clone());
-        return fresh;
-      } catch (err) {
-        const cache = await caches.open(CACHE);
-        return (await cache.match(BASE + 'index.html')) || Response.error();
-      }
-    })());
-    return;
-  }
-
-  event.respondWith((async () => {
-    const cache = await caches.open(CACHE);
-    const cached = await cache.match(req, { ignoreVary: true });
-    if (cached) return cached;
-
-    const fresh = await fetch(req);
-    if (fresh && fresh.ok && req.method === 'GET') cache.put(req, fresh.clone());
-    return fresh;
-  })());
-});
+// Không chặn navigation/fetch để tránh giữ file cũ và tránh làm app mở chậm.
