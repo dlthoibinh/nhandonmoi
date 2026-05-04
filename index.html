@@ -32,112 +32,64 @@
 
   <style>
     :root{
-      --blue:#0ea5e9;
-      --blue2:#0369a1;
-      --red:#dc2626;
-      --yellow:#facc15;
-      --text:#0f172a;
-      --muted:#64748b;
-      --line:#e2e8f0;
       --safe-top:env(safe-area-inset-top,0px);
       --safe-right:env(safe-area-inset-right,0px);
       --safe-bottom:env(safe-area-inset-bottom,0px);
       --safe-left:env(safe-area-inset-left,0px);
     }
     *{box-sizing:border-box}
-    html,body{height:100%;margin:0;background:#f8fafc;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);overflow:hidden}
-    .app{position:fixed;inset:0;display:flex;flex-direction:column;background:#fff}
-    .frame-wrap{position:relative;flex:1;min-height:0;padding:var(--safe-top) var(--safe-right) var(--safe-bottom) var(--safe-left);background:#fff}
-    iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:#fff}
-    .panel{position:absolute;inset:0;z-index:10;display:flex;align-items:center;justify-content:center;padding:22px;background:linear-gradient(160deg,#f8fbff,#e0f2fe)}
-    .panel[hidden]{display:none!important}
-    .card{width:min(420px,92vw);border:1px solid rgba(14,165,233,.25);background:rgba(255,255,255,.92);border-radius:28px;box-shadow:0 22px 60px rgba(2,132,199,.18);padding:24px;text-align:center}
-    .logo{width:86px;height:86px;border-radius:24px;box-shadow:0 14px 28px rgba(2,132,199,.18);margin-bottom:12px}
-    .title{font-size:22px;font-weight:900;letter-spacing:.2px;margin:0 0 6px}
-    .desc{font-size:14px;line-height:1.45;color:var(--muted);margin:0 0 16px}
-    .spinner{width:36px;height:36px;border-radius:999px;border:4px solid #bae6fd;border-top-color:var(--blue2);margin:14px auto;animation:spin .8s linear infinite}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
-    .btn{appearance:none;border:0;border-radius:999px;padding:11px 15px;font-weight:800;font-size:14px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px}
-    .btn-primary{background:var(--blue2);color:#fff}
-    .btn-light{background:#fff;color:var(--blue2);border:1px solid var(--line)}
-    .hint{font-size:12px;color:#64748b;margin-top:12px}
-    .offline{background:linear-gradient(160deg,#fff7ed,#fee2e2)}
-    .offline .card{border-color:rgba(220,38,38,.25);box-shadow:0 22px 60px rgba(220,38,38,.14)}
-    @media (max-width:480px){
-      .card{padding:20px;border-radius:24px}
-      .title{font-size:20px}
-      .logo{width:78px;height:78px}
+    html,body{
+      width:100%;
+      height:100%;
+      margin:0;
+      padding:0;
+      overflow:hidden;
+      background:#fff;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+    }
+    #app{
+      position:fixed;
+      inset:0;
+      width:100vw;
+      height:100dvh;
+      min-height:100vh;
+      background:#fff;
+      overflow:hidden;
+    }
+    #appFrame{
+      position:absolute;
+      left:0;
+      top:0;
+      width:100%;
+      height:100%;
+      border:0;
+      margin:0;
+      padding:0;
+      background:#fff;
+      display:block;
+    }
+    @supports (padding:max(0px)){
+      #appFrame{
+        padding-top:var(--safe-top);
+        padding-right:var(--safe-right);
+        padding-bottom:var(--safe-bottom);
+        padding-left:var(--safe-left);
+      }
     }
   </style>
 </head>
 <body>
-  <main class="app">
-    <section class="frame-wrap">
-      <iframe id="appFrame"
-        title="Nhận đơn mới EVN SPC"
-        src="https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec"
-        allow="geolocation *; camera *; microphone *; fullscreen *; clipboard-read *; clipboard-write *; accelerometer *; gyroscope *; magnetometer *"
-        referrerpolicy="no-referrer"
-        loading="eager"></iframe>
-
-      <div id="loadingPanel" class="panel" aria-live="polite">
-        <div class="card">
-          <img class="logo" src="evn_logo.png" alt="Nhận đơn mới">
-          <h1 class="title">NHẬN ĐƠN MỚI EVN SPC</h1>
-          <p class="desc">Đang mở ứng dụng nhận đơn mới...</p>
-          <div class="spinner" aria-hidden="true"></div>
-          <div class="actions" id="slowActions" hidden>
-            <a class="btn btn-primary" href="https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec" target="_blank" rel="noopener">Mở trực tiếp</a>
-            <button class="btn btn-light" type="button" onclick="location.reload()">Tải lại</button>
-          </div>
-          <p class="hint" id="slowHint" hidden>Nếu màn hình bị trắng, kiểm tra Web App Apps Script đã bật quyền nhúng iframe.</p>
-        </div>
-      </div>
-
-      <div id="offlinePanel" class="panel offline" hidden aria-live="polite">
-        <div class="card">
-          <img class="logo" src="evn_logo.png" alt="Nhận đơn mới">
-          <h1 class="title">Mất kết nối Internet</h1>
-          <p class="desc">Ứng dụng cần mạng để tải dữ liệu từ Google Apps Script.</p>
-          <div class="actions">
-            <button class="btn btn-primary" type="button" onclick="location.reload()">Thử lại</button>
-          </div>
-        </div>
-      </div>
-    </section>
+  <main id="app">
+    <iframe id="appFrame"
+      title="Nhận đơn mới EVN SPC"
+      src="https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec"
+      allow="geolocation *; camera *; microphone *; fullscreen *; clipboard-read *; clipboard-write *; accelerometer *; gyroscope *; magnetometer *"
+      referrerpolicy="no-referrer"
+      loading="eager"></iframe>
   </main>
 
   <script>
-    const APP_URL = 'https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec';
     const BASE = location.pathname.endsWith('/') ? location.pathname : location.pathname.replace(/\/[^/]*$/, '/');
-    const frame = document.getElementById('appFrame');
-    const loadingPanel = document.getElementById('loadingPanel');
-    const offlinePanel = document.getElementById('offlinePanel');
-    const slowActions = document.getElementById('slowActions');
-    const slowHint = document.getElementById('slowHint');
-
-    function setOfflineUI(on) {
-      offlinePanel.hidden = !on;
-      if (on) loadingPanel.hidden = true;
-    }
-
-    window.addEventListener('online', () => setOfflineUI(false));
-    window.addEventListener('offline', () => setOfflineUI(true));
-    setOfflineUI(!navigator.onLine);
-
-    frame.addEventListener('load', () => {
-      window.setTimeout(() => {
-        if (navigator.onLine) loadingPanel.hidden = true;
-      }, 450);
-    });
-
-    window.setTimeout(() => {
-      if (!loadingPanel.hidden && navigator.onLine) {
-        slowActions.hidden = false;
-        slowHint.hidden = false;
-      }
-    }, 7000);
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
