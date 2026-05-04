@@ -1,5 +1,6 @@
 const BASE = new URL('./', self.location).pathname;
-const CACHE = 'nhan-don-moi-evn-spc-pwa-v1';
+const CACHE_PREFIX = 'nhan-don-moi-evn-spc-pwa-';
+const CACHE = CACHE_PREFIX + 'v2-no-splash';
 
 const STATIC_ASSETS = [
   BASE,
@@ -25,7 +26,11 @@ self.addEventListener('install', event => {
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.map(key => key !== CACHE ? caches.delete(key) : null)))
+      .then(keys => Promise.all(
+        keys
+          .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE)
+          .map(key => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
@@ -39,7 +44,7 @@ self.addEventListener('fetch', event => {
   if (req.mode === 'navigate') {
     event.respondWith((async () => {
       try {
-        const fresh = await fetch(req);
+        const fresh = await fetch(req, { cache: 'no-store' });
         const cache = await caches.open(CACHE);
         cache.put(BASE + 'index.html', fresh.clone());
         return fresh;
