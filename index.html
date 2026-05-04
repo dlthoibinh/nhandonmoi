@@ -3,55 +3,72 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <title>NHẬN ĐƠN MỚI ĐL THỚI BÌNH</title>
+  <title>NHẬN ĐƠN MỚI KHÁCH HÀNG</title>
 
   <!-- Manifest & PWA -->
   <link rel="manifest" href="manifest.webmanifest">
   <meta name="theme-color" content="#0ea5e9">
   <link rel="apple-touch-icon" href="icon-192-any.png">
-  <link rel="canonical" href="https://dlthoibinh.github.io/nhandonmoi/">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="icon-512.png">
+  <link rel="canonical" href="./">
 
-  <!-- iOS -->
+  <!-- Android / iOS -->
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Nhận đơn">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <!-- CSP: cấm mixed-content, chỉ cho phép những domain cần -->
+  <!-- Tối ưu kết nối Apps Script -->
+  <link rel="dns-prefetch" href="//script.google.com">
+  <link rel="dns-prefetch" href="//script.googleusercontent.com">
+  <link rel="preconnect" href="https://script.google.com" crossorigin>
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
+
+  <!-- CSP: giống CRM, chỉ cho phép domain cần thiết -->
   <meta http-equiv="Content-Security-Policy"
         content="
           default-src 'self';
           frame-src https://script.google.com https://*.googleusercontent.com;
           connect-src 'self' https://script.google.com https://*.googleusercontent.com;
-          img-src 'self' data: https:;
+          img-src 'self' data: blob: https:;
+          media-src 'self' data: blob: https:;
           style-src 'self' 'unsafe-inline';
-          script-src 'self';
+          script-src 'self' 'unsafe-inline';
+          worker-src 'self';
           base-uri 'self';
-          form-action 'none';
+          form-action 'self' https://script.google.com https://*.googleusercontent.com;
           block-all-mixed-content;
         ">
 
   <style>
-    html,body{height:100%;margin:0;background:#f6f7fb;font-family:system-ui,Roboto,Arial}
-    .app{position:fixed;inset:0;display:flex;flex-direction:column}
-    #wrap{flex:1;position:relative}
-    iframe{position:absolute;inset:0;border:0;width:100%;height:100%}
-    .offline{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#fff}
+    html,body{height:100%;margin:0;background:#f6f7fb;font-family:system-ui,Roboto,Arial;overflow:hidden}
+    .app{position:fixed;inset:0;display:flex;flex-direction:column;background:#fff}
+    #wrap{flex:1;position:relative;min-height:0;background:#fff}
+    iframe{position:absolute;inset:0;border:0;width:100%;height:100%;display:block;background:#fff}
+    .offline{position:absolute;inset:0;display:none;align-items:center;justify-content:center;background:#fff;z-index:10;padding:24px}
     .offline.show{display:flex}
-    .offline button{padding:10px 14px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-weight:800;cursor:pointer}
+    .offline .box{text-align:center;max-width:360px}
+    .offline h2{margin:0 0 8px;color:#0f172a;font-size:24px}
+    .offline p{margin:0 0 16px;color:#64748b;font-size:15px;line-height:1.45}
+    .offline button{padding:10px 14px;border-radius:999px;border:1px solid #e5e7eb;background:#fff;font-weight:800;cursor:pointer;color:#0f172a}
   </style>
 </head>
 <body>
   <div class="app">
     <div id="wrap">
       <iframe id="app"
+        title="Nhận đơn mới khách hàng"
         src="https://script.google.com/macros/s/AKfycbwAJgSxWDGXYPI0kg-BHe3irmUwlGVPNJka464AOlegD6WDGS_C-kmvrU0tjFEhHaJ4/exec"
-        allow="geolocation *; fullscreen *; camera *; microphone *; clipboard-read; clipboard-write; accelerometer; gyroscope; magnetometer"
-        referrerpolicy="no-referrer"></iframe>
+        allow="geolocation *; fullscreen *; camera *; microphone *; clipboard-read *; clipboard-write *; accelerometer *; gyroscope *; magnetometer *"
+        referrerpolicy="no-referrer"
+        loading="eager"></iframe>
 
       <div id="offline" class="offline">
-        <div style="text-align:center">
+        <div class="box">
           <h2>Không có mạng</h2>
-          <p>Ứng dụng cần kết nối Internet để chạy.</p>
-          <button onclick="location.reload()">Thử lại</button>
+          <p>Ứng dụng cần kết nối Internet để tải dữ liệu từ Google Apps Script.</p>
+          <button type="button" onclick="location.reload()">Thử lại</button>
         </div>
       </div>
     </div>
@@ -69,8 +86,8 @@
     }
 
     const setOfflineUI = on => document.getElementById('offline').classList.toggle('show', !!on);
-    addEventListener('online',  ()=>setOfflineUI(false));
-    addEventListener('offline', ()=>setOfflineUI(true));
+    addEventListener('online',  () => setOfflineUI(false));
+    addEventListener('offline', () => setOfflineUI(true));
     setOfflineUI(!navigator.onLine);
   </script>
 </body>
