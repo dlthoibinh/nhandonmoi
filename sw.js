@@ -1,58 +1,59 @@
-const BASE = new URL('./', self.location).pathname;
-const CACHE_PREFIX = 'nhan-don-moi-evn-spc-pwa-';
-const CACHE = CACHE_PREFIX + 'crm-style-pro-v1';
+'use strict';
 
-const STATIC_ASSETS = [
-  BASE,
-  BASE + 'index.html',
-  BASE + 'manifest.webmanifest',
-  BASE + 'evn_logo.png',
-  BASE + 'icon-192-any.png',
-  BASE + 'icon-512-any.png',
-  BASE + 'icon-192-maskable.png',
-  BASE + 'icon-512-maskable.png',
-  BASE + 'icon-192.png',
-  BASE + 'icon-512.png'
-];
+/*
+ * Service Worker tự dọn và tự hủy.
+ * Mục đích:
+ * - Xóa cache index.html cũ có iframe.
+ * - Ngừng điều khiển trang GitHub Pages.
+ * - Buộc APK nhận index.html mới chuyển hướng trực tiếp.
+ */
 
-self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(STATIC_ASSETS)));
+const OLD_CACHE_PREFIX = 'nhan-don-moi-evn-spc-pwa-';
+
+self.addEventListener('install', function () {
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then(keys => Promise.all(keys.map(k => k.startsWith(CACHE_PREFIX) && k !== CACHE ? caches.delete(k) : 0)))
+self.addEventListener('activate', function (event) {
+  event.waitUntil(
+    (async function () {
+      try {
+        // Xóa toàn bộ cache PWA cũ.
+        const cacheNames = await caches.keys();
+
+        await Promise.all(
+          cacheNames
+            .filter(function (cacheName) {
+              return cacheName.startsWith(OLD_CACHE_PREFIX);
+            })
+            .map(function (cacheName) {
+              return caches.delete(cacheName);
+            })
+        );
+
+        // Gỡ đăng ký Service Worker này.
+        await self.registration.unregister();
+
+        // Tải lại các cửa sổ đang mở để nhận index.html mới.
+        const clientList = await self.clients.matchAll({
+          type: 'window',
+          includeUncontrolled: true
+        });
+
+        clientList.forEach(function (client) {
+          client.navigate(client.url);
+        });
+      } catch (error) {
+        console.error('Không thể dọn Service Worker cũ:', error);
+      }
+    })()
   );
-  self.clients.claim();
 });
 
-self.addEventListener('fetch', (e) => {
-  const req = e.request;
-  const url = new URL(req.url);
-  if (url.origin !== self.location.origin || !url.pathname.startsWith(BASE)) return;
-
-  if (req.mode === 'navigate') {
-    e.respondWith((async () => {
-      try {
-        const fresh = await fetch(req);
-        const cache = await caches.open(CACHE);
-        cache.put(req, fresh.clone());
-        return fresh;
-      } catch {
-        const cache = await caches.open(CACHE);
-        return (await cache.match(BASE + 'index.html')) || Response.error();
-      }
-    })());
-    return;
-  }
-
-  e.respondWith((async () => {
-    const cache = await caches.open(CACHE);
-    const cached = await cache.match(req, { ignoreVary: true });
-    if (cached) return cached;
-    const res = await fetch(req);
-    if (res.ok && req.method === 'GET') cache.put(req, res.clone());
-    return res;
-  })());
+/*
+ * Không chặn request.
+ * Tất cả request tiếp tục chạy trực tiếp qua mạng.
+ */
+self.addEventListener('fetch', function () {
+  // Không dùng event.respondWith().
 });
